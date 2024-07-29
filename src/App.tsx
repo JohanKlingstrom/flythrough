@@ -1,35 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Gltf, ScrollControls, useScroll } from "@react-three/drei";
+import { getProject, val } from "@theatre/core";
 
-function App() {
-  const [count, setCount] = useState(0)
+import {
+  SheetProvider,
+  PerspectiveCamera,
+  useCurrentSheet
+} from "@theatre/r3f";
+
+export default function App() {
+  const sheet = getProject("Fly Through").sheet("Scene");
+
+  return (
+    <Canvas gl={{ preserveDrawingBuffer: true }}>
+      <ScrollControls pages={5}>
+        <SheetProvider sheet={sheet}>
+          <Scene />
+        </SheetProvider>
+      </ScrollControls>
+    </Canvas>
+  );
+}
+
+function Scene() {
+  const sheet = useCurrentSheet();
+  const scroll = useScroll();
+
+  // our callback will run on every animation frame
+  useFrame(() => {
+    // the length of our sequence
+    const sequenceLength = val(sheet!.sequence.pointer.length);
+    // update the "position" of the playhead in the sequence, as a fraction of its whole length
+    sheet!.sequence.position = scroll.offset * sequenceLength;
+  });
+
+  const bgColor = "#84a4f4";
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <color attach="background" args={[bgColor]} />
+      <fog attach="fog" color={bgColor} near={-4} far={10} />
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[-5, 5, -5]} intensity={1.5} />
+      <Gltf src="/environment.glb" castShadow receiveShadow />
+      <PerspectiveCamera
+        theatreKey="Camera"
+        makeDefault
+        position={[0, 0, 0]}
+        fov={90}
+        near={0.1}
+        far={70}
+      />
     </>
-  )
+  );
 }
-
-export default App
