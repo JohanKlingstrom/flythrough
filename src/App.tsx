@@ -1,6 +1,7 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Gltf, ScrollControls, useScroll } from "@react-three/drei";
 import { getProject, val } from "@theatre/core";
+import flyThroughState from "./state.json";
 
 import {
   SheetProvider,
@@ -9,7 +10,9 @@ import {
 } from "@theatre/r3f";
 
 export default function App() {
-  const sheet = getProject("Fly Through").sheet("Scene");
+  const sheet = getProject("Fly Through", { state: flyThroughState }).sheet(
+    "Scene"
+  );
 
   return (
     <Canvas gl={{ preserveDrawingBuffer: true }}>
