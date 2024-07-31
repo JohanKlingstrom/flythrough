@@ -16,7 +16,7 @@ export default function App() {
 
   return (
     <Canvas gl={{ preserveDrawingBuffer: true }}>
-      <ScrollControls pages={5}>
+      <ScrollControls pages={10}>
         <SheetProvider sheet={sheet}>
           <Scene />
         </SheetProvider>
@@ -44,7 +44,7 @@ function Scene() {
       <color attach="background" args={[bgColor]} />
       <fog attach="fog" color={bgColor} near={-4} far={10} />
       <ambientLight intensity={0.5} />
-      <directionalLight position={[-5, 5, -5]} intensity={1.5} />
+      <directionalLight position={[-5, 5, -5]} intensity={1} />
       <Gltf src="/environment.glb" castShadow receiveShadow />
       <PerspectiveCamera
         theatreKey="Camera"
